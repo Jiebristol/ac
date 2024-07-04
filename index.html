@@ -1,100 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GPS Test</title>
-  <style>
-    #info {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background-color: rgba(255, 255, 255, 0.8);
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-  </style>
+    <title>获取相机朝向和经纬度</title>
 </head>
 <body>
-<div id="info">
-  <p id="location"></p>
-  <p id="direction"></p>
-</div>
+    <h1>相机朝向和经纬度信息</h1>
+    <p id="orientation">相机朝向: 未知</p>
+    <p id="location">当前位置: 未知</p>
 
-<script>
-  function startTracking() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition, showError);
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
+    <script>
+        // 检测设备是否支持DeviceOrientationEvent
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', function(event) {
+                // 获取alpha值，即设备围绕Z轴的旋转角度
+                var alpha = event.alpha;
 
-    if (window.DeviceOrientationEvent) {
-      // iOS 13+ needs explicit permission
-      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        DeviceOrientationEvent.requestPermission()
-          .then(permissionState => {
-            if (permissionState === 'granted') {
-              window.addEventListener('deviceorientation', handleOrientation);
-            } else {
-              alert("Permission to access device orientation was denied.");
-            }
-          })
-          .catch(console.error);
-      } else {
-        window.addEventListener('deviceorientation', handleOrientation);
-      }
-    } else {
-      alert("Device Orientation API not supported.");
-    }
-  }
+                // 这里你可以使用alpha来判断相机的朝向
+                document.getElementById('orientation').innerText = '相机朝向: ' + alpha + '度';
+            }, false);
+        } else {
+            document.getElementById('orientation').innerText = '设备不支持方向传感器';
+        }
 
-  function showPosition(position) {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-    document.getElementById('location').textContent = `Location: Latitude ${latitude.toFixed(6)}, Longitude ${longitude.toFixed(6)}`;
-  }
+        // 检测设备是否支持Geolocation API
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
 
-  function showError(error) {
-    switch(error.code) {
-      case error.PERMISSION_DENIED:
-        alert("User denied the request for Geolocation.");
-        break;
-      case error.POSITION_UNAVAILABLE:
-        alert("Location information is unavailable.");
-        break;
-      case error.TIMEOUT:
-        alert("The request to get user location timed out.");
-        break;
-      case error.UNKNOWN_ERROR:
-        alert("An unknown error occurred.");
-        break;
-    }
-  }
-
-  function handleOrientation(event) {
-    const alpha = event.alpha; // 方向，0-360度
-    const beta = event.beta;   // 前后倾斜，-180到180度
-    const gamma = event.gamma; // 左右倾斜，-90到90度
-
-    // 判断设备方向
-    let directionText = '';
-    if (alpha >= 315 || alpha < 45) {
-      directionText = '北';
-    } else if (alpha >= 45 && alpha < 135) {
-      directionText = '东';
-    } else if (alpha >= 135 && alpha < 225) {
-      directionText = '南';
-    } else if (alpha >= 225 && alpha < 315) {
-      directionText = '西';
-    }
-
-    document.getElementById('direction').textContent = `Direction: ${directionText} (${alpha.toFixed(2)} degrees)`;
-  }
-
-  // 页面加载后立即开始检测
-  window.addEventListener('load', startTracking);
-</script>
+                // 显示当前位置的经纬度
+                document.getElementById('location').innerText = '当前位置: 纬度 ' + latitude + ', 经度 ' + longitude;
+            }, function(error) {
+                document.getElementById('location').innerText = '获取位置失败: ' + error.message;
+            });
+        } else {
+            document.getElementById('location').innerText = '设备不支持地理定位';
+        }
+    </script>
 </body>
 </html>
