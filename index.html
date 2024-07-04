@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GPS test</title>
+  <title>GPS Test</title>
   <style>
     #info {
       position: absolute;
@@ -25,17 +25,52 @@
 <script>
   function startTracking() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
+      navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+      alert("Geolocation is not supported by this browser.");
     }
+
     if (window.DeviceOrientationEvent) {
-      window.addEventListener('deviceorientation', handleOrientation);
+      // iOS 13+ needs explicit permission
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+          .then(permissionState => {
+            if (permissionState === 'granted') {
+              window.addEventListener('deviceorientation', handleOrientation);
+            } else {
+              alert("Permission to access device orientation was denied.");
+            }
+          })
+          .catch(console.error);
+      } else {
+        window.addEventListener('deviceorientation', handleOrientation);
+      }
+    } else {
+      alert("Device Orientation API not supported.");
     }
   }
 
   function showPosition(position) {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
-    document.getElementById('location').textContent = `location: latitude ${latitude.toFixed(6)}, longitude ${longitude.toFixed(6)}`;
+    document.getElementById('location').textContent = `Location: Latitude ${latitude.toFixed(6)}, Longitude ${longitude.toFixed(6)}`;
+  }
+
+  function showError(error) {
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+        alert("User denied the request for Geolocation.");
+        break;
+      case error.POSITION_UNAVAILABLE:
+        alert("Location information is unavailable.");
+        break;
+      case error.TIMEOUT:
+        alert("The request to get user location timed out.");
+        break;
+      case error.UNKNOWN_ERROR:
+        alert("An unknown error occurred.");
+        break;
+    }
   }
 
   function handleOrientation(event) {
@@ -55,7 +90,7 @@
       directionText = '西';
     }
 
-    document.getElementById('direction').textContent = `方向: ${directionText} (${alpha.toFixed(2)} 度)`;
+    document.getElementById('direction').textContent = `Direction: ${directionText} (${alpha.toFixed(2)} degrees)`;
   }
 
   // 页面加载后立即开始检测
