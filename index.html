@@ -1,41 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>获取相机朝向和经纬度</title>
+  <title>AR.js A-Frame Location-based</title>
+  <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+  <script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/master/three.js/build/ar-threex-location-only.js'></script>
+  <script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js'></script>
+  <script type="text/javascript">
+    var latitude;
+    var longitude;
+    let avClicks = 3;
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        document.getElementById("locationInfo").innerHTML = "Geolocation is not supported by this browser.";
+      }
+    }
+    function showPosition(position) {
+      latitude = position.coords.latitude;
+      longitude = position.coords.longitude;
+
+    }
+    function PlanTree(){
+      getLocation();
+      if (avClicks!==0) {
+        avClicks--;
+        const scene = document.querySelector('a-scene');
+        const newEntity = document.createElement('a-entity');
+        newEntity.setAttribute('material', 'color: green');
+        newEntity.setAttribute('geometry', 'primitive: cone; radiusBottom: 1; radiusTop: 0; height: 2');
+        newEntity.setAttribute('gps-new-entity-place', `latitude: ${latitude+0.00001}; longitude: ${longitude+0.00001}`);
+        scene.appendChild(newEntity);
+        let myButton = document.getElementById("myButton");
+        myButton.value="Plan Tree remaining times:"+avClicks;
+      }
+      if(avClicks===0){
+        let myButton = document.getElementById("myButton");
+        myButton.style.backgroundColor='grey';
+      }
+    }
+    window.onload=function (){
+      getLocation();
+      let myButton = document.getElementById("myButton")
+      myButton.value="Plan Tree remaining times:"+avClicks;
+    }
+  </script>
+  <style>
+    #myButton {
+      position: absolute;
+      bottom: 20px; /* Position 20px from the bottom */
+      left: 50%; /* Center horizontally */
+      transform: translateX(-50%); /* Adjust position to center */
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: green;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1; /* Make sure the button is on top of the AR scene */
+    }
+  </style>
 </head>
 <body>
-    <h1>相机朝向和经纬度信息</h1>
-    <p id="orientation">相机朝向: 未知</p>
-    <p id="location">当前位置: 未知</p>
 
-    <script>
-        // 检测设备是否支持DeviceOrientationEvent
-        if (window.DeviceOrientationEvent) {
-            window.addEventListener('deviceorientation', function(event) {
-                // 获取alpha值，即设备围绕Z轴的旋转角度
-                var alpha = event.alpha;
-
-                // 这里你可以使用alpha来判断相机的朝向
-                document.getElementById('orientation').innerText = '相机朝向: ' + alpha + '度';
-            }, false);
-        } else {
-            document.getElementById('orientation').innerText = '设备不支持方向传感器';
-        }
-
-        // 检测设备是否支持Geolocation API
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var latitude = position.coords.latitude;
-                var longitude = position.coords.longitude;
-
-                // 显示当前位置的经纬度
-                document.getElementById('location').innerText = '当前位置: 纬度 ' + latitude + ', 经度 ' + longitude;
-            }, function(error) {
-                document.getElementById('location').innerText = '获取位置失败: ' + error.message;
-            });
-        } else {
-            document.getElementById('location').innerText = '设备不支持地理定位';
-        }
-    </script>
+<a-scene vr-mode-ui='enabled: false' arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false' renderer='antialias: true; alpha: true'>
+  <a-camera gps-new-camera='gpsMinDistance: 0.1'></a-camera>
+</a-scene>
+<input type="button" id="myButton" onclick="PlanTree()" value=""/>
 </body>
 </html>
