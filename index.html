@@ -29,7 +29,7 @@
         const newEntity = document.createElement('a-entity');
         newEntity.setAttribute('gltf-model', 'url(/tree.glb)');
         newEntity.setAttribute('gps-new-entity-place', `latitude: ${latitude}; longitude: ${longitude}`);
-        newEntity.setAttribute('scale', '10 10 10');
+        newEntity.setAttribute('scale', '0.1 0.1 0.1');
         newEntity.setAttribute('material', 'color: green; opacity: 1');
         scene.appendChild(newEntity);
         let myButton = document.getElementById("myButton");
