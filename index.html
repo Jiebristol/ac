@@ -30,6 +30,7 @@
         newEntity.setAttribute('gltf-model', 'url(/tree.glb)');
         newEntity.setAttribute('gps-new-entity-place', `latitude: ${latitude+0.00001}; longitude: ${longitude+0.00001}`);
         newEntity.setAttribute('scale', '10 10 10');
+        newEntity.setAttribute('material', 'color: green; opacity: 1');
         scene.appendChild(newEntity);
         let myButton = document.getElementById("myButton");
         myButton.value="Plan Tree remaining times:"+avClicks;
