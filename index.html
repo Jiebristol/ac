@@ -27,9 +27,9 @@
         avClicks--;
         const scene = document.querySelector('a-scene');
         const newEntity = document.createElement('a-entity');
-        newEntity.setAttribute('material', 'color: green');
-        newEntity.setAttribute('geometry', 'primitive: cone; radiusBottom: 1; radiusTop: 0; height: 2');
+        newEntity.setAttribute('gltf-model', 'url(/tree.glb)');
         newEntity.setAttribute('gps-new-entity-place', `latitude: ${latitude+0.00001}; longitude: ${longitude+0.00001}`);
+        newEntity.setAttribute('scale', '10 10 10');
         scene.appendChild(newEntity);
         let myButton = document.getElementById("myButton");
         myButton.value="Plan Tree remaining times:"+avClicks;
