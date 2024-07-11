@@ -6,6 +6,18 @@
   <script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/master/three.js/build/ar-threex-location-only.js'></script>
   <script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js'></script>
   <script type="text/javascript">
+    let ws = new WebSocket("ws://localhost:8080/ARtree")
+    ws.onmessage=function (message){
+      console.log(message.data)
+      const scene = document.querySelector('a-scene');
+      const newEntity = document.createElement('a-entity');
+      newEntity.setAttribute('gltf-model', 'tree.glb');
+      newEntity.setAttribute('gps-new-entity-place', `latitude: ${1}; longitude: ${1}`);
+      const scaleValue = 0.004;
+      newEntity.setAttribute('scale', `${scaleValue} ${scaleValue} ${scaleValue}`);
+      scene.appendChild(newEntity);
+
+    }
     var latitude;
     var longitude;
     let avClicks = 5;
@@ -34,6 +46,7 @@
         scene.appendChild(newEntity);
         let myButton = document.getElementById("myButton");
         myButton.value="Plan Tree remaining times:"+avClicks;
+        ws.send(latitude+0.00001+"   "+longitude+0.00001)
       }
       if(avClicks===0){
         let myButton = document.getElementById("myButton");
