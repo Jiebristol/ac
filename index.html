@@ -8,7 +8,7 @@
   <script type="text/javascript">
     var latitude;
     var longitude;
-    let avClicks = 5;
+    let avClicks = 4;
     function getLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
@@ -29,7 +29,7 @@
         const newEntity = document.createElement('a-entity');
         newEntity.setAttribute('gltf-model', 'tree.glb');
         newEntity.setAttribute('gps-new-entity-place', `latitude: ${latitude}; longitude: ${longitude}`);
-        const scaleValue = 0.001;
+        const scaleValue = 0.01;
         newEntity.setAttribute('scale', `${scaleValue} ${scaleValue} ${scaleValue}`);
         scene.appendChild(newEntity);
         let myButton = document.getElementById("myButton");
