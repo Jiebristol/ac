@@ -27,7 +27,7 @@
         avClicks--;
         const scene = document.querySelector('a-scene');
         const newEntity = document.createElement('a-entity');
-        newEntity.setAttribute('gltf-model', 'url(tree.glb)');
+        newEntity.setAttribute('gltf-model', 'tree.glb');
         newEntity.setAttribute('gps-new-entity-place', `latitude: ${latitude}; longitude: ${longitude}`);
         const scaleValue = Math.pow(1, 2 - avClicks);
         newEntity.setAttribute('scale', `${scaleValue} ${scaleValue} ${scaleValue}`);
