@@ -8,7 +8,7 @@
   <script type="text/javascript">
     var latitude;
     var longitude;
-    let avClicks = 3;
+    let avClicks = 5;
     function getLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
@@ -29,7 +29,8 @@
         const newEntity = document.createElement('a-entity');
         newEntity.setAttribute('gltf-model', 'tree.glb');
         newEntity.setAttribute('gps-new-entity-place', `latitude: ${latitude}; longitude: ${longitude}`);
-        newEntity.setAttribute('scale', `0.1 0.1 0.1`);
+        const scaleValue = Math.pow(1, 2 - avClicks);
+        newEntity.setAttribute('scale', `${scaleValue} ${scaleValue} ${scaleValue}`);
         scene.appendChild(newEntity);
         let myButton = document.getElementById("myButton");
         myButton.value="Plan Tree remaining times:"+avClicks;
