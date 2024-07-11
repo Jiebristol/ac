@@ -8,18 +8,41 @@
   <script type="text/javascript">
     let ws = new WebSocket("ws://localhost:8080/ARtree")
     ws.onmessage=function (message){
-      console.log(message.data)
+      var data = message.data;
+      var parts = data.split(",");
+      var x = parts[0];
+      var y = parts[1];
       const scene = document.querySelector('a-scene');
       const newEntity = document.createElement('a-entity');
       newEntity.setAttribute('gltf-model', 'tree.glb');
-      newEntity.setAttribute('gps-new-entity-place', `latitude: ${1}; longitude: ${1}`);
+      newEntity.setAttribute('gps-new-entity-place', `latitude: ${y}; longitude: ${x}`);
       const scaleValue = 0.004;
       newEntity.setAttribute('scale', `${scaleValue} ${scaleValue} ${scaleValue}`);
       scene.appendChild(newEntity);
-
     }
-    var latitude;
-    var longitude;
+    ws.onopen = function () {
+      console.log('WebSocket is connected.');
+      if (navigator.geolocation) {
+        setInterval(() => {
+          navigator.geolocation.getCurrentPosition(position => {
+            const latitude = position.coords.latitude.toFixed(6);
+            const longitude = position.coords.longitude.toFixed(6);
+
+            const message = JSON.stringify({
+              type: 'current-location',
+              latitude: latitude,
+              longitude: longitude
+            });
+            ws.send(message);
+            console.log('Sent:', message);
+          }, error => {
+            console.error('Error getting location:', error);
+          });
+        }, 4000);
+      }
+    };
+    let latitude;
+    let longitude;
     let avClicks = 5;
     function getLocation() {
       if (navigator.geolocation) {
@@ -31,7 +54,6 @@
     function showPosition(position) {
       latitude = position.coords.latitude;
       longitude = position.coords.longitude;
-
     }
     function PlanTree(){
       getLocation();
@@ -46,7 +68,12 @@
         scene.appendChild(newEntity);
         let myButton = document.getElementById("myButton");
         myButton.value="Plan Tree remaining times:"+avClicks;
-        ws.send(latitude+0.00001+"   "+longitude+0.00001)
+        const message = JSON.stringify({
+          type: 'plant-location',
+          latitude: latitude+0.00001,
+          longitude: longitude+0.00001
+        });
+        ws.send(message)
       }
       if(avClicks===0){
         let myButton = document.getElementById("myButton");
