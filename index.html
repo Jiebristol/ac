@@ -43,7 +43,7 @@
     };
     let latitude;
     let longitude;
-    let avClicks = 5;
+    let avClicks = 4;
     function getLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
@@ -106,7 +106,6 @@
 <body>
 
 <a-scene vr-mode-ui='enabled: false' arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false' renderer='antialias: true; alpha: true'>
-  //<a-camera gps-new-camera='gpsMinDistance: 3'></a-camera>
 </a-scene>
 <input type="button" id="myButton" onclick="PlanTree()" value=""/>
 </body>
